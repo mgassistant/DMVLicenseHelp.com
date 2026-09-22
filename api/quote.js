@@ -97,6 +97,8 @@ export default async function handler(req, res) {
     source: "dmvlicensehelp.com",
     tenant_id: BROKERIQ_TENANT_ID,
     lead_type: "dmv_license_help",
+    lead_status: (b.partial === true || b.partial === "true") ? "partial" : "complete",
+    partial: (b.partial === true || b.partial === "true"),
     name,
     email,
     phone,
@@ -107,8 +109,8 @@ export default async function handler(req, res) {
   await Promise.allSettled([
     forwardToBrokerIQ(lead),
     sendEmail(
-      `New DMV License Help lead: ${name || email || phone || "(no name)"}`,
-      `<h2>New DMV License Help lead</h2>
+      `${(b.partial===true||b.partial==="true") ? "[PARTIAL LEAD] " : ""}New DMV License Help lead: ${name || email || phone || "(no name)"}`,
+      `<h2>${(b.partial===true||b.partial==="true") ? "[PARTIAL — form not completed] " : ""}New DMV License Help lead</h2>
        <p><b>Name:</b> ${esc(name)}</p>
        <p><b>Email:</b> ${esc(email)}</p>
        <p><b>Phone:</b> ${esc(phone)}</p>
